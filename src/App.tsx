@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   AppBar,
@@ -39,9 +38,11 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Logout as LogoutIcon,
-  AccountCircle as AccountIcon
+  AccountCircle as AccountIcon,
+  Settings as SettingsIcon
 } from '@mui/icons-material';
 import LoginPage from './LoginPage';
+import ProfilePage from './ProfilePage';
 import './App.css';
 
 interface Contact {
@@ -90,6 +91,7 @@ function TabPanel({ children, value, index }: { children: React.ReactNode; value
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'profile'>('dashboard');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [tabValue, setTabValue] = useState(0);
   const [attendants, setAttendants] = useState<Contact[]>([
@@ -295,8 +297,31 @@ export default function App() {
     </Grid>
   );
 
+  const handleProfileClick = () => {
+    setCurrentPage('profile');
+    handleMenuClose();
+  };
+
+  const handleBackToDashboard = () => {
+    setCurrentPage('dashboard');
+  };
+
+  const handleUpdateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+  };
+
   if (!user) {
     return <LoginPage onLogin={handleLogin} />;
+  }
+
+  if (currentPage === 'profile') {
+    return (
+      <ProfilePage
+        user={user}
+        onUpdateUser={handleUpdateUser}
+        onBack={handleBackToDashboard}
+      />
+    );
   }
 
   return (
@@ -337,6 +362,10 @@ export default function App() {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
+              <MenuItem onClick={handleProfileClick}>
+                <SettingsIcon sx={{ mr: 1 }} />
+                Profile Settings
+              </MenuItem>
               <MenuItem onClick={handleLogout}>
                 <LogoutIcon sx={{ mr: 1 }} />
                 Logout
