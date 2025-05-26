@@ -26,7 +26,9 @@ import {
   Chip,
   Grid,
   Paper,
-  Divider
+  Divider,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -35,8 +37,11 @@ import {
   Phone as PhoneIcon,
   Chat as ChatIcon,
   Delete as DeleteIcon,
-  Edit as EditIcon
+  Edit as EditIcon,
+  Logout as LogoutIcon,
+  AccountCircle as AccountIcon
 } from '@mui/icons-material';
+import LoginPage from './LoginPage';
 import './App.css';
 
 interface Contact {
@@ -69,6 +74,12 @@ interface Instance {
   status: 'connected' | 'disconnected';
 }
 
+interface User {
+  name: string;
+  role: string;
+  phone: string;
+}
+
 function TabPanel({ children, value, index }: { children: React.ReactNode; value: number; index: number }) {
   return (
     <div hidden={value !== index}>
@@ -78,6 +89,8 @@ function TabPanel({ children, value, index }: { children: React.ReactNode; value
 }
 
 export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [tabValue, setTabValue] = useState(0);
   const [attendants, setAttendants] = useState<Contact[]>([
     { id: '1', name: 'John Doe', phone: '+1234567890', status: 'online' },
@@ -110,6 +123,23 @@ export default function App() {
   const [dialogType, setDialogType] = useState<'attendant' | 'client' | 'bot' | 'instance'>('attendant');
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [newContact, setNewContact] = useState({ name: '', phone: '' });
+
+  const handleLogin = (userData: User) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setAnchorEl(null);
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleAddContact = () => {
     if (newContact.name && newContact.phone) {
@@ -265,6 +295,10 @@ export default function App() {
     </Grid>
   );
 
+  if (!user) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" elevation={0} sx={{ backgroundColor: '#25D366' }}>
@@ -273,6 +307,42 @@ export default function App() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             WhatsApp Helpdesk Manager
           </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Typography variant="body2">
+              Welcome, {user.name} ({user.role})
+            </Typography>
+            <IconButton
+              size="large"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenuOpen}
+              color="inherit"
+            >
+              <AccountIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={handleLogout}>
+                <LogoutIcon sx={{ mr: 1 }} />
+                Logout
+              </MenuItem>
+            </Menu>
+          </Box>
         </Toolbar>
       </AppBar>
 
