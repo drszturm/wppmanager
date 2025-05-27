@@ -56,6 +56,10 @@ export interface Translations {
   loginDescription: string;
   fillAllFields: string;
   validPhoneNumber: string;
+  
+  // Profile Page
+  personalInformation: string;
+  saveChanges: string;
 }
 
 export const translations: Record<string, Translations> = {
@@ -115,7 +119,11 @@ export const translations: Record<string, Translations> = {
     loginButton: "Login to Dashboard",
     loginDescription: "Manage your WhatsApp support team efficiently",
     fillAllFields: "Please fill in all fields",
-    validPhoneNumber: "Please enter a valid phone number"
+    validPhoneNumber: "Please enter a valid phone number",
+    
+    // Profile Page
+    personalInformation: "Personal Information",
+    saveChanges: "Save Changes"
   },
   es: {
     // App Bar
@@ -173,7 +181,11 @@ export const translations: Record<string, Translations> = {
     loginButton: "Iniciar Sesión en el Panel",
     loginDescription: "Gestiona tu equipo de soporte de WhatsApp eficientemente",
     fillAllFields: "Por favor completa todos los campos",
-    validPhoneNumber: "Por favor ingresa un número de teléfono válido"
+    validPhoneNumber: "Por favor ingresa un número de teléfono válido",
+    
+    // Profile Page
+    personalInformation: "Información Personal",
+    saveChanges: "Guardar Cambios"
   },
   pt: {
     // App Bar
@@ -231,7 +243,11 @@ export const translations: Record<string, Translations> = {
     loginButton: "Entrar no Painel",
     loginDescription: "Gerencie sua equipe de suporte WhatsApp eficientemente",
     fillAllFields: "Por favor preencha todos os campos",
-    validPhoneNumber: "Por favor insira um número de telefone válido"
+    validPhoneNumber: "Por favor insira um número de telefone válido",
+    
+    // Profile Page
+    personalInformation: "Informações Pessoais",
+    saveChanges: "Salvar Alterações"
   }
 };
 

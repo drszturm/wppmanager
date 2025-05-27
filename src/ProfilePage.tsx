@@ -15,7 +15,9 @@ import {
   Toolbar,
   FormControl,
   Select,
-  MenuItem
+  MenuItem,
+  Chip,
+  Grid
 } from '@mui/material';
 import { 
   ArrowBack as ArrowBackIcon, 
@@ -81,7 +83,7 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
               <ArrowBackIcon />
             </IconButton>
             <Typography variant="h4" component="h1" fontWeight="bold">
-              User Profile
+              {t.userProfile}
             </Typography>
           </Box>
         </Container>
@@ -126,30 +128,30 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
             <Divider sx={{ mb: 4 }} />
 
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid xs={12} md={6}>
                 <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
                   <Typography variant="h6" gutterBottom color="primary">
-                    Personal Information
+                    {t.personalInformation || 'Personal Information'}
                   </Typography>
 
                   {isEditing ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                       <TextField
-                        label="Full Name"
+                        label={t.fullName}
                         value={editForm.name}
                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                         variant="outlined"
                         fullWidth
                       />
                       <TextField
-                        label="Phone Number"
+                        label={t.phoneNumber}
                         value={editForm.phone}
                         onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                         variant="outlined"
                         fullWidth
                       />
                       <TextField
-                        label="Role"
+                        label={t.role}
                         value={editForm.role}
                         onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
                         variant="outlined"
@@ -157,9 +159,9 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
                         select
                         SelectProps={{ native: true }}
                       >
-                        <option value="admin">Administrator</option>
-                        <option value="attendant">Attendant</option>
-                        <option value="supervisor">Supervisor</option>
+                        <option value="admin">{t.admin}</option>
+                        <option value="attendant">{t.attendant}</option>
+                        <option value="supervisor">{t.supervisor}</option>
                       </TextField>
 
                       <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
@@ -169,14 +171,14 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
                           onClick={handleSave}
                           sx={{ backgroundColor: '#25D366' }}
                         >
-                          Save Changes
+                          {t.saveChanges || 'Save Changes'}
                         </Button>
                         <Button
                           variant="outlined"
                           startIcon={<CancelIcon />}
                           onClick={handleCancel}
                         >
-                          Cancel
+                          {t.cancel}
                         </Button>
                       </Box>
                     </Box>
@@ -184,7 +186,7 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                       <Box>
                         <Typography variant="body2" color="text.secondary">
-                          Full Name
+                          {t.fullName}
                         </Typography>
                         <Typography variant="body1" fontWeight="500">
                           {user.name}
@@ -192,7 +194,7 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
                       </Box>
                       <Box>
                         <Typography variant="body2" color="text.secondary">
-                          Phone Number
+                          {t.phoneNumber}
                         </Typography>
                         <Typography variant="body1" fontWeight="500">
                           {user.phone}
@@ -200,10 +202,10 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
                       </Box>
                       <Box>
                         <Typography variant="body2" color="text.secondary">
-                          Role
+                          {t.role}
                         </Typography>
                         <Typography variant="body1" fontWeight="500">
-                          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                          {user.role === 'admin' ? t.admin : user.role === 'supervisor' ? t.supervisor : t.attendant}
                         </Typography>
                       </Box>
                     </Box>
@@ -211,7 +213,7 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
                 </Paper>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid xs={12} md={6}>
                 <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
                   <Typography variant="h6" gutterBottom color="primary">
                     Account Statistics
