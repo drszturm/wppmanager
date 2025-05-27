@@ -28,7 +28,9 @@ import {
   Paper,
   Divider,
   Menu,
-  MenuItem
+  MenuItem,
+  Select,
+  FormControl
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -40,10 +42,12 @@ import {
   Edit as EditIcon,
   Logout as LogoutIcon,
   AccountCircle as AccountIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Language as LanguageIcon
 } from '@mui/icons-material';
 import LoginPage from './LoginPage';
 import ProfilePage from './ProfilePage';
+import { getTranslation } from './translations';
 import './App.css';
 
 interface Contact {
@@ -92,6 +96,7 @@ function TabPanel({ children, value, index }: { children: React.ReactNode; value
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [language, setLanguage] = useState('en');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showProfilePage, setShowProfilePage] = useState(false);
@@ -127,6 +132,8 @@ export default function App() {
   const [dialogType, setDialogType] = useState<'attendant' | 'client' | 'bot' | 'instance'>('attendant');
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [newContact, setNewContact] = useState({ name: '', phone: '' });
+
+  const t = getTranslation(language);
 
   const handleLogin = (userData: User) => {
     setUser(userData);
@@ -214,7 +221,7 @@ export default function App() {
                 secondary={contact.phone}
               />
               <Chip
-                label={contact.status}
+                label={contact.status === 'online' ? t.online : t.offline}
                 color={contact.status === 'online' ? 'success' : 'default'}
                 size="small"
               />
@@ -231,7 +238,7 @@ export default function App() {
         <Card elevation={2}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Client Chats
+              {t.clientChats}
             </Typography>
             <List>
               {chats.map((chat) => {
@@ -267,7 +274,7 @@ export default function App() {
           <Card elevation={2}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Chat History
+                {t.chatHistory}
               </Typography>
               <Paper variant="outlined" sx={{ height: 400, overflow: 'auto', p: 2 }}>
                 {selectedChat.messages.map((message) => (
@@ -302,7 +309,7 @@ export default function App() {
           <Card elevation={2}>
             <CardContent>
               <Typography variant="h6" color="text.secondary" textAlign="center">
-                Select a chat to view history
+                {t.selectChat}
               </Typography>
             </CardContent>
           </Card>
@@ -312,7 +319,7 @@ export default function App() {
   );
 
   if (!user) {
-    return <LoginPage onLogin={handleLogin} />;
+    return <LoginPage onLogin={handleLogin} language={language} onLanguageChange={setLanguage} />;
   }
 
   if (showProfilePage) {
@@ -321,6 +328,8 @@ export default function App() {
         user={user}
         onBack={handleBackToMain}
         onUpdateUser={handleUpdateUser}
+        language={language}
+        onLanguageChange={setLanguage}
       />
     );
   }
@@ -341,11 +350,31 @@ export default function App() {
           </IconButton>
           <PhoneIcon sx={{ mr: 2 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            WhatsApp Helpdesk Manager
+            {t.appTitle}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <FormControl size="small" sx={{ minWidth: 80 }}>
+              <Select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                variant="outlined"
+                sx={{ 
+                  color: 'white',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.3)'
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: 'white'
+                  }
+                }}
+              >
+                <MenuItem value="en">🇺🇸 EN</MenuItem>
+                <MenuItem value="es">🇪🇸 ES</MenuItem>
+                <MenuItem value="pt">🇧🇷 PT</MenuItem>
+              </Select>
+            </FormControl>
             <Typography variant="body2">
-              Welcome, {user.name} ({user.role})
+              {t.welcome}, {user.name} ({user.role === 'admin' ? t.admin : user.role === 'supervisor' ? t.supervisor : t.attendant})
             </Typography>
             <IconButton
               size="large"
@@ -375,7 +404,7 @@ export default function App() {
             >
               <MenuItem onClick={handleLogout}>
                 <LogoutIcon sx={{ mr: 1 }} />
-                Logout
+                {t.logout}
               </MenuItem>
             </Menu>
           </Box>
@@ -384,17 +413,17 @@ export default function App() {
 
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         <Tabs value={tabValue} onChange={(_, newValue) => setTabValue(newValue)} centered>
-          <Tab label="Attendants" />
-          <Tab label="Clients" />
-          <Tab label="Bots" />
-          <Tab label="Instances" />
-          <Tab label="Chat History" />
+          <Tab label={t.attendants} />
+          <Tab label={t.clients} />
+          <Tab label={t.bots} />
+          <Tab label={t.instances} />
+          <Tab label={t.chatHistory} />
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>
           <ContactList
             contacts={attendants}
-            type="Attendants"
+            type={t.attendants}
             onDelete={(id) => setAttendants(attendants.filter(a => a.id !== id))}
           />
         </TabPanel>
@@ -402,7 +431,7 @@ export default function App() {
         <TabPanel value={tabValue} index={1}>
           <ContactList
             contacts={clients}
-            type="Clients"
+            type={t.clients}
             onDelete={(id) => setClients(clients.filter(c => c.id !== id))}
           />
         </TabPanel>
@@ -410,7 +439,7 @@ export default function App() {
         <TabPanel value={tabValue} index={2}>
           <ContactList
             contacts={bots}
-            type="Bots"
+            type={t.bots}
             onDelete={(id) => setBots(bots.filter(b => b.id !== id))}
           />
         </TabPanel>
@@ -419,7 +448,7 @@ export default function App() {
           <Card elevation={2}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                WhatsApp Instances ({instances.length})
+                {t.whatsappInstances} ({instances.length})
               </Typography>
               <List>
                 {instances.map((instance) => (
@@ -438,7 +467,7 @@ export default function App() {
                       secondary={instance.number}
                     />
                     <Chip
-                      label={instance.status}
+                      label={instance.status === 'connected' ? t.connected : t.disconnected}
                       color={instance.status === 'connected' ? 'success' : 'error'}
                       size="small"
                     />
@@ -468,12 +497,17 @@ export default function App() {
       </Fab>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Add New {dialogType.charAt(0).toUpperCase() + dialogType.slice(1)}</DialogTitle>
+        <DialogTitle>
+          {dialogType === 'attendant' && t.addNewAttendant}
+          {dialogType === 'client' && t.addNewClient}
+          {dialogType === 'bot' && t.addNewBot}
+          {dialogType === 'instance' && t.addNewInstance}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
-            label="Name"
+            label={t.name}
             fullWidth
             variant="outlined"
             value={newContact.name}
@@ -482,7 +516,7 @@ export default function App() {
           />
           <TextField
             margin="dense"
-            label={dialogType === 'instance' ? 'Instance Number' : 'Phone Number'}
+            label={dialogType === 'instance' ? t.instanceNumber : t.phoneNumber}
             fullWidth
             variant="outlined"
             value={newContact.phone}
@@ -490,13 +524,13 @@ export default function App() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button onClick={handleAddContact} variant="contained">Add</Button>
+          <Button onClick={() => setOpenDialog(false)}>{t.cancel}</Button>
+          <Button onClick={handleAddContact} variant="contained">{t.add}</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={showProfile} onClose={() => setShowProfile(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>User Profile</DialogTitle>
+        <DialogTitle>{t.userProfile}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -506,28 +540,28 @@ export default function App() {
               <Box>
                 <Typography variant="h6">{user?.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
+                  {user?.role === 'admin' ? t.admin : user?.role === 'supervisor' ? t.supervisor : t.attendant}
                 </Typography>
               </Box>
             </Box>
             <Divider />
             <TextField
-              label="Full Name"
+              label={t.fullName}
               value={user?.name || ''}
               variant="outlined"
               disabled
               fullWidth
             />
             <TextField
-              label="Phone Number"
+              label={t.phoneNumber}
               value={user?.phone || ''}
               variant="outlined"
               disabled
               fullWidth
             />
             <TextField
-              label="Role"
-              value={user?.role.charAt(0).toUpperCase() + user?.role.slice(1) || ''}
+              label={t.role}
+              value={user?.role === 'admin' ? t.admin : user?.role === 'supervisor' ? t.supervisor : t.attendant}
               variant="outlined"
               disabled
               fullWidth
@@ -535,7 +569,7 @@ export default function App() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowProfile(false)}>Close</Button>
+          <Button onClick={() => setShowProfile(false)}>{t.close}</Button>
         </DialogActions>
       </Dialog>
     </Box>

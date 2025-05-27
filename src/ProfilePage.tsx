@@ -1,47 +1,53 @@
-
 import React, { useState } from 'react';
 import {
   Box,
   Card,
   CardContent,
+  TextField,
+  Button,
   Typography,
   Container,
   Avatar,
-  TextField,
-  Button,
-  Divider,
-  Grid,
-  Paper,
   IconButton,
-  Chip
+  Divider,
+  Paper,
+  AppBar,
+  Toolbar,
+  FormControl,
+  Select,
+  MenuItem
 } from '@mui/material';
-import {
-  Person as PersonIcon,
+import { 
+  ArrowBack as ArrowBackIcon, 
+  Person as PersonIcon, 
   Edit as EditIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
-  ArrowBack as ArrowBackIcon
+  Language as LanguageIcon
 } from '@mui/icons-material';
-
-interface User {
-  name: string;
-  role: string;
-  phone: string;
-}
+import { getTranslation } from './translations';
 
 interface ProfilePageProps {
-  user: User;
+  user: {
+    name: string;
+    role: string;
+    phone: string;
+  };
   onBack: () => void;
-  onUpdateUser: (user: User) => void;
+  onUpdateUser: (user: { name: string; role: string; phone: string }) => void;
+  language: string;
+  onLanguageChange: (lang: string) => void;
 }
 
-export default function ProfilePage({ user, onBack, onUpdateUser }: ProfilePageProps) {
+export default function ProfilePage({ user, onBack, onUpdateUser, language, onLanguageChange }: ProfilePageProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: user.name,
     phone: user.phone,
     role: user.role
   });
+
+  const t = getTranslation(language);
 
   const handleSave = () => {
     onUpdateUser(editForm);
@@ -125,7 +131,7 @@ export default function ProfilePage({ user, onBack, onUpdateUser }: ProfilePageP
                   <Typography variant="h6" gutterBottom color="primary">
                     Personal Information
                   </Typography>
-                  
+
                   {isEditing ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                       <TextField
@@ -155,7 +161,7 @@ export default function ProfilePage({ user, onBack, onUpdateUser }: ProfilePageP
                         <option value="attendant">Attendant</option>
                         <option value="supervisor">Supervisor</option>
                       </TextField>
-                      
+
                       <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                         <Button
                           variant="contained"
