@@ -43,6 +43,7 @@ import {
   Settings as SettingsIcon
 } from '@mui/icons-material';
 import LoginPage from './LoginPage';
+import ProfilePage from './ProfilePage';
 import './App.css';
 
 interface Contact {
@@ -93,6 +94,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showProfile, setShowProfile] = useState(false);
+  const [showProfilePage, setShowProfilePage] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [attendants, setAttendants] = useState<Contact[]>([
     { id: '1', name: 'John Doe', phone: '+1234567890', status: 'online' },
@@ -144,7 +146,15 @@ export default function App() {
   };
 
   const handleProfileClick = () => {
-    setShowProfile(true);
+    setShowProfilePage(true);
+  };
+
+  const handleBackToMain = () => {
+    setShowProfilePage(false);
+  };
+
+  const handleUpdateUser = (updatedUser: User) => {
+    setUser(updatedUser);
   };
 
   const handleAddContact = () => {
@@ -303,6 +313,16 @@ export default function App() {
 
   if (!user) {
     return <LoginPage onLogin={handleLogin} />;
+  }
+
+  if (showProfilePage) {
+    return (
+      <ProfilePage
+        user={user}
+        onBack={handleBackToMain}
+        onUpdateUser={handleUpdateUser}
+      />
+    );
   }
 
   return (
