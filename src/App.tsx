@@ -39,7 +39,8 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Logout as LogoutIcon,
-  AccountCircle as AccountIcon
+  AccountCircle as AccountIcon,
+  Settings as SettingsIcon
 } from '@mui/icons-material';
 import LoginPage from './LoginPage';
 import './App.css';
@@ -91,6 +92,7 @@ function TabPanel({ children, value, index }: { children: React.ReactNode; value
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [showProfile, setShowProfile] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [attendants, setAttendants] = useState<Contact[]>([
     { id: '1', name: 'John Doe', phone: '+1234567890', status: 'online' },
@@ -139,6 +141,10 @@ export default function App() {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleProfileClick = () => {
+    setShowProfile(true);
   };
 
   const handleAddContact = () => {
@@ -303,6 +309,16 @@ export default function App() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" elevation={0} sx={{ backgroundColor: '#25D366' }}>
         <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="profile"
+            onClick={handleProfileClick}
+            sx={{ mr: 2 }}
+          >
+            <SettingsIcon />
+          </IconButton>
           <PhoneIcon sx={{ mr: 2 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             WhatsApp Helpdesk Manager
@@ -456,6 +472,50 @@ export default function App() {
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
           <Button onClick={handleAddContact} variant="contained">Add</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={showProfile} onClose={() => setShowProfile(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>User Profile</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar sx={{ width: 80, height: 80, backgroundColor: '#25D366' }}>
+                <PersonIcon sx={{ fontSize: 40 }} />
+              </Avatar>
+              <Box>
+                <Typography variant="h6">{user?.name}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
+                </Typography>
+              </Box>
+            </Box>
+            <Divider />
+            <TextField
+              label="Full Name"
+              value={user?.name || ''}
+              variant="outlined"
+              disabled
+              fullWidth
+            />
+            <TextField
+              label="Phone Number"
+              value={user?.phone || ''}
+              variant="outlined"
+              disabled
+              fullWidth
+            />
+            <TextField
+              label="Role"
+              value={user?.role.charAt(0).toUpperCase() + user?.role.slice(1) || ''}
+              variant="outlined"
+              disabled
+              fullWidth
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowProfile(false)}>Close</Button>
         </DialogActions>
       </Dialog>
     </Box>
