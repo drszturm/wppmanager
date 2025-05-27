@@ -17,7 +17,10 @@ import {
   Select,
   MenuItem,
   Chip,
-  Grid
+  Grid,
+  Stack,
+  Switch,
+  FormControlLabel
 } from '@mui/material';
 import { 
   ArrowBack as ArrowBackIcon, 
@@ -25,7 +28,8 @@ import {
   Edit as EditIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
-  Language as LanguageIcon
+  Language as LanguageIcon,
+  Schedule as ScheduleIcon
 } from '@mui/icons-material';
 import { getTranslation } from './translations';
 
@@ -41,6 +45,45 @@ interface ProfilePageProps {
   onLanguageChange: (lang: string) => void;
 }
 
+interface Schedule {
+  enabled: boolean;
+  startTime: string;
+  endTime: string;
+}
+
+interface WeeklySchedule {
+  monday: Schedule;
+  tuesday: Schedule;
+  wednesday: Schedule;
+  thursday: Schedule;
+  friday: Schedule;
+  saturday: Schedule;
+  sunday: Schedule;
+}
+
+const initialSchedule: WeeklySchedule = {
+  monday: { enabled: false, startTime: '09:00', endTime: '17:00' },
+  tuesday: { enabled: false, startTime: '09:00', endTime: '17:00' },
+  wednesday: { enabled: false, startTime: '09:00', endTime: '17:00' },
+  thursday: { enabled: false, startTime: '09:00', endTime: '17:00' },
+  friday: { enabled: false, startTime: '09:00', endTime: '17:00' },
+  saturday: { enabled: false, startTime: '09:00', endTime: '17:00' },
+  sunday: { enabled: false, startTime: '09:00', endTime: '17:00' }
+};
+
+const getDayName = (day: string) => {
+  switch (day) {
+    case 'monday': return 'Monday';
+    case 'tuesday': return 'Tuesday';
+    case 'wednesday': return 'Wednesday';
+    case 'thursday': return 'Thursday';
+    case 'friday': return 'Friday';
+    case 'saturday': return 'Saturday';
+    case 'sunday': return 'Sunday';
+    default: return day;
+  }
+};
+
 export default function ProfilePage({ user, onBack, onUpdateUser, language, onLanguageChange }: ProfilePageProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -48,6 +91,9 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
     phone: user.phone,
     role: user.role
   });
+
+  const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule>(initialSchedule);
+  const [isEditingSchedule, setIsEditingSchedule] = useState(false);
 
   const t = getTranslation(language);
 
@@ -64,6 +110,23 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
     });
     setIsEditing(false);
   };
+
+  const handleScheduleChange = (day: keyof WeeklySchedule, field: string, value: any) => {
+    setWeeklySchedule(prevSchedule => ({
+      ...prevSchedule,
+      [day]: {
+        ...prevSchedule[day],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSaveSchedule = () => {
+    // Here, you would typically send the updated weeklySchedule to your backend.
+    setIsEditingSchedule(false);
+    console.log('Saving schedule:', weeklySchedule);
+  };
+
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
@@ -264,6 +327,96 @@ export default function ProfilePage({ user, onBack, onUpdateUser, language, onLa
                       Download Data
                     </Button>
                   </Box>
+                </Paper>
+              </Grid>
+
+              <Grid xs={12}>
+                <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <ScheduleIcon color="primary" />
+                      <Typography variant="h6" color="primary">
+                        Weekly Availability Schedule
+                      </Typography>
+                    </Box>
+                    <Button
+                      variant={isEditingSchedule ? "contained" : "outlined"}
+                      onClick={isEditingSchedule ? handleSaveSchedule : () => setIsEditingSchedule(true)}
+                      startIcon={isEditingSchedule ? <SaveIcon /> : <EditIcon />}
+                      sx={isEditingSchedule ? { backgroundColor: '#25D366' } : {}}
+                    >
+                      {isEditingSchedule ? 'Save Schedule' : 'Edit Schedule'}
+                    </Button>
+                  </Box>
+
+                  <Stack spacing={2}>
+                    {Object.entries(weeklySchedule).map(([day, schedule]) => (
+                      <Paper
+                        key={day}
+                        variant="outlined"
+                        sx={{
+                          p: 2,
+                          backgroundColor: schedule.enabled ? 'rgba(37, 211, 102, 0.05)' : 'transparent'
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                          <Box sx={{ minWidth: 120 }}>
+                            <Typography variant="body1" fontWeight="500">
+                              {getDayName(day)}
+                            </Typography>
+                          </Box>
+
+                          {isEditingSchedule ? (
+                            <>
+                              <FormControlLabel
+                                control={
+                                  <Switch
+                                    checked={schedule.enabled}
+                                    onChange={(e) => handleScheduleChange(day as keyof WeeklySchedule, 'enabled', e.target.checked)}
+                                    color="primary"
+                                  />
+                                }
+                                label="Available"
+                              />
+                              {schedule.enabled && (
+                                <>
+                                  <TextField
+                                    type="time"
+                                    label="Start Time"
+                                    value={schedule.startTime}
+                                    onChange={(e) => handleScheduleChange(day as keyof WeeklySchedule, 'startTime', e.target.value)}
+                                    size="small"
+                                    InputLabelProps={{ shrink: true }}
+                                  />
+                                  <TextField
+                                    type="time"
+                                    label="End Time"
+                                    value={schedule.endTime}
+                                    onChange={(e) => handleScheduleChange(day as keyof WeeklySchedule, 'endTime', e.target.value)}
+                                    size="small"
+                                    InputLabelProps={{ shrink: true }}
+                                  />
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <Chip
+                                label={schedule.enabled ? 'Available' : 'Not Available'}
+                                color={schedule.enabled ? 'success' : 'default'}
+                                size="small"
+                              />
+                              {schedule.enabled && (
+                                <Typography variant="body2" color="text.secondary">
+                                  {schedule.startTime} - {schedule.endTime}
+                                </Typography>
+                              )}
+                            </>
+                          )}
+                        </Box>
+                      </Paper>
+                    ))}
+                  </Stack>
                 </Paper>
               </Grid>
             </Grid>

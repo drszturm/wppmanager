@@ -60,6 +60,15 @@ export interface Translations {
   // Profile Page
   personalInformation: string;
   saveChanges: string;
+  
+  // Days of the week
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+  sunday: string;
 }
 
 export const translations: Record<string, Translations> = {
@@ -123,7 +132,16 @@ export const translations: Record<string, Translations> = {
     
     // Profile Page
     personalInformation: "Personal Information",
-    saveChanges: "Save Changes"
+    saveChanges: "Save Changes",
+    
+    // Days of the week
+    monday: "Monday",
+    tuesday: "Tuesday",
+    wednesday: "Wednesday",
+    thursday: "Thursday",
+    friday: "Friday",
+    saturday: "Saturday",
+    sunday: "Sunday"
   },
   es: {
     // App Bar
@@ -185,7 +203,16 @@ export const translations: Record<string, Translations> = {
     
     // Profile Page
     personalInformation: "Información Personal",
-    saveChanges: "Guardar Cambios"
+    saveChanges: "Guardar Cambios",
+    
+    // Days of the week
+    monday: "Lunes",
+    tuesday: "Martes",
+    wednesday: "Miércoles",
+    thursday: "Jueves",
+    friday: "Viernes",
+    saturday: "Sábado",
+    sunday: "Domingo"
   },
   pt: {
     // App Bar
@@ -247,7 +274,16 @@ export const translations: Record<string, Translations> = {
     
     // Profile Page
     personalInformation: "Informações Pessoais",
-    saveChanges: "Salvar Alterações"
+    saveChanges: "Salvar Alterações",
+    
+    // Days of the week
+    monday: "Segunda-feira",
+    tuesday: "Terça-feira",
+    wednesday: "Quarta-feira",
+    thursday: "Quinta-feira",
+    friday: "Sexta-feira",
+    saturday: "Sábado",
+    sunday: "Domingo"
   }
 };
 
